@@ -1,0 +1,8 @@
+digraph finite_state_machine {
+	rankdir=LR;
+	size="8,5"
+	node [shape = circle]; State0 ;
+	State0 -> State0 [ 
+         label = "tac=if state then not tmp else false\ntic=if state then tmp else false\ntmp = true -> if state then not pre tmp else pre tmp\nstate = n = 0 and first\nfirst = false -> reset or pre first\nn=if reset then delay else if pre n = 0 and first then hz else (pre n) - 1\nhz = 0 -> if reset then delay - 1 else pre hz\n" 
+        ];
+}

@@ -1,0 +1,13 @@
+digraph finite_state_machine {
+	rankdir=LR;
+	size="8,5"
+	node [shape = circle]; S0, S1, S2, S3 ;
+	S0 -> S1 ;
+	S1 -> S1 [ label="!reset" ];
+	S1 -> S2 [ label="reset & state" ];
+	S1 -> S3 [ label="reset & !state" ];
+	S2 -> S2 [ label="!state" ];
+	S2 -> S3 [ label="state" ];
+	S3 -> S3 [ label="!state" ];
+	S3 -> S2 [ label="state" ];
+}
