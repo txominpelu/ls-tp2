@@ -1,0 +1,9 @@
+node env(S,R : bool; o : bool) returns (set,reset : bool);
+let
+  set = if S and not R then true
+        else if S and R then o
+             else false;
+  reset = if R and not S then true
+          else if S and R then not o
+               else false;
+tel
