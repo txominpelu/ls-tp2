@@ -1,21 +1,25 @@
-node metronome (reset : bool; delay : int) 
-     returns (tic, tac, not_tic_tic, obs3: bool);
-  var n, hz : int;
-      state, first, tmp: bool;
+node metronome (reset : bool; delay : int)
+     returns (first, tic, tac, not_tic_tic, obs3: bool; n: int);
+  var hz : int;
+      initial, state, tmp: bool;
 let
-    assert (delay > 0);
+    assert (delay > 1);
+
     not_tic_tic = not_tic_after_tic(tic, tac);
     obs3 = obs3(tic, reset, delay);
 
-    hz = 0 -> if reset then delay - 1 else pre hz;
-    n = 0 -> if reset then delay
-             else if pre n = 0 and first then hz
+    initial = true -> false;
+    hz = if reset then delay + 1
+         else if not initial then pre hz
+         else 0;
+    n = if reset then delay
+             else if first and ((pre n) = 0) then hz
              else (pre n) - 1;
-    first = false -> reset or pre first;
-    state = n = 0 and first;
+    first = reset -> reset or pre first;
+    state = (n = 0) and first;
 
     tmp = true -> if state then not pre tmp else pre tmp;
-    
+   
     tic = if state then tmp else false;
     tac = if state then not tmp else false;
 tel
@@ -31,18 +35,20 @@ let
 tel
 
 node obs3 (tic, reset : bool; delay : int) returns (out: bool)
-   var twice_last, last_delay, last_tic : int; counting: bool;
+   var twice_last, last_delay, last_tic : int; 
+       reset_after_lasttic ,counting: bool;
 let
+   assert (delay > 1);
    last_delay = delay -> if reset then delay else pre last_delay;
    last_tic =  0 -> if tic then 0
                     else if counting then (pre last_tic) + 1
                     else 0;
-   counting = false -> if reset and not tic then false 
+   counting = false -> if reset and not tic then false
               else if tic then true
               else pre counting;
    twice_last = (pre last_delay * 2);
-   --reset_after_lasttic = not once_from_to(tac, tic, tic)
-   out = true -> if tic and (pre counting) then twice_last = ((pre last_tic) + 1) else true;
+   reset_after_lasttic = once_from_to(reset, tic, tic);
+   out = true -> if tic and not reset_after_lasttic then twice_last = ((pre last_tic) + 1) else true;
 tel
 
 

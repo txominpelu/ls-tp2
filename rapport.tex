@@ -3,6 +3,7 @@
 \usepackage{verbatim}
 \usepackage{minted}
 \usepackage{graphicx}
+\usepackage[utf8]{inputenc}
 
 \title{Langages synchrones : TP2}
 
@@ -20,6 +21,7 @@
 \maketitle
 
 \section{Métronome}
+
 
 \subsection{Noeud Lustre}
 
@@ -52,10 +54,17 @@ only see how this delay is respected but also how the next signal
 emitted is not tic but tac, since the last sinal emmited with delay
 1 was tic.
 
+\begin{figure}[ht]
+\label{trace-metronome-1}
+\caption{Execution of the metronome}
+\includegraphics [width=1\textwidth, natwidth=750,natheight=400]{metronome_1.png}
+\end{figure}
+
 \subsection{Automaton}
 
 The code for C for the metronome that is generated with the commands
 lus2oc and poc is shown in figure~\ref{metronome-0}.
+
 
 \begin{figure}[ht]
 
@@ -105,7 +114,7 @@ respect to the code in lustre is the following:
 And thus the corresponding automaton for the C code is shown
 in figure~\ref{automaton-0}
 
-\begin{figure}[!ht]
+\begin{figure}[ht]
 \begin{center}
 \includegraphics[width=0.8\textwidth, natwidth=610,natheight=642] {automaton-0.png}
 \end{center}
@@ -119,13 +128,99 @@ converted into 4 states. As demonstrated by figure~\ref{automaton-2}
 the automaton is unfolded based on the values of the signals \emph{reset}
 and \emph{state}.
 
-\begin{figure}[!ht]
+\begin{figure}[ht]
 \label{automaton-2}
 \caption{Automaton with unfolding}
 \begin{center}
 \includegraphics[width=0.8\textwidth, natwidth=610,natheight=642]{automaton-2.png}
 \end{center}
 \end{figure}
+
+
+\subsection{Verification}
+
+\begin{itemize}
+
+\item P1: At every moment there cannot be a tic and a tac simultaneously
+
+\begin{verbatim}
+node not_same_time(tic, tac:bool) returns (out: bool)
+let
+  out = not (tic and tac);
+tel
+\end{verbatim}
+
+\item P2: There can never be two consecutive tics 
+
+\begin{verbatim}
+
+node not_tic_after_tic(tic, tac:bool) returns (out:bool)
+let
+  out = once_from_to(tac, tic, tic);
+tel
+
+node once_from_to (X, A, B : bool) returns (ok : bool)
+var x_after_a, s: bool;
+let
+  x_after_a = false -> if pre B then false
+                       else if s and X then true
+                       else if pre x_after_a and A then false
+                       else pre x_after_a;
+
+  s = switch (false, A, B);
+
+  ok =  true ->
+
+  if s then true else if B and not x_after_a then false else pre ok;
+tel
+
+node switch (orig, on, off : bool) returns (state : bool);
+let
+
+  state = orig -> if on then true
+
+  else if off then false
+
+  else pre state;
+tel
+
+\end{verbatim}
+
+\item P3: The delay between two tics must be equal to twice the delay
+  given in the last reset unless a reset happens between the two tics.
+
+We haven't managed to make it validate on xlesar, even though the
+following code seemed to give reasonable results when tracing it with
+luciole as shown in the following figure.
+
+
+\begin{verbatim}
+node obs3 (tic, reset : bool; delay : int) returns (out: bool)
+   var twice_last, last_delay, last_tic : int; counting: bool;
+let
+   assert (delay > 1);
+   last_delay = delay -> if reset then delay else pre last_delay;
+   last_tic =  0 -> if tic then 0
+                    else if counting then (pre last_tic) + 1
+                    else 0;
+   counting = false -> if reset and not tic then false
+              else if tic then true
+              else pre counting;
+   twice_last = (pre last_delay * 2);
+   out = true -> if tic and (pre counting) then 
+                   twice_last = ((pre last_tic) + 1) else true;
+tel
+\end{verbatim}
+
+\begin{figure}[!ht]
+\begin{center}
+\includegraphics[width=0.8\textwidth, natwidth=610,natheight=642] {img/trace-obs3.png}
+\end{center}
+\label{trace-obs3}
+\caption{Tracing P3 with luciole}
+\end{figure}
+
+\end{itemize}
 
 \section{Modeling a bus arbitration system}
 
@@ -364,9 +459,5 @@ The following state graph is then:
 The result is obvious, since we jsut need to remove the \emph{C1C2} part from
 the graph.
 
-%\begin{figure}
-%\label{trace-metronome-1}
-%\caption{Execution of the metronome}
-%\includegraphics [scale=0.4]{metronome_1.png}
-%\end{figure}
+
 \end{document}
