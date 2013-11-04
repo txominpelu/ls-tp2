@@ -242,12 +242,23 @@ otherwise the previous value is given.
 
 \paragraph{Question 2}
 
-TODO
+The graph representing the following asynchronous node:
+
+\begin{center}
+\includegraphics{asyn_1.pdf}
+\end{center}
+
+Since C1 and C2 are totaly independant, they don't have interaction. Moreover,
+we don't need their behavior and can suppose they are simply a state. We add
+another state, \emph{C1C2}, which correspond to the possibility of having C1 and
+C2 executed at the same time, and an $\epsilon$-transition from Main to Main,
+corresponding of no activation at all.
 
 \paragraph{Question 3}
 
 We can add strict asynchronism on the scheduler by reusing the env node from the
-previous part. This way, we can assure the at most one component can activate.
+previous part. This way, we can assure the at most one component can activate,
+since the variable set and reset can't be true at the same time.
 
 \begin{verbatim}
 node main(x,y : int; S, R : bool) returns (o1,o2 : int);
@@ -258,7 +269,14 @@ let
 tel
 \end{verbatim}
 
-NOT FINISHED
+The following state graph is then:
+
+\begin{center}
+\includegraphics{asyn_strict.pdf}
+\end{center}
+
+The result is obvious, since we jsut need to remove the \emph{C1C2} part from
+the graph.
 
 %\begin{figure}
 %\label{trace-metronome-1}
