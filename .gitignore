@@ -1,0 +1,8 @@
+*
+!.gitignore
+!*.lus
+!*.viz
+!*.png
+!*.tex
+!img/*.png
+!img/

@@ -6,7 +6,7 @@ let
   token_out = false -> (pre token_in);
 
   tmp_ovr2 = false -> (req_in and ((pre token_in) or (pre tmp_ovr2)));
-  tmp_ovr3 = ((pre token_in) and pre tmp_ovr2);
+  tmp_ovr3 = false -> ((pre token_in) and pre tmp_ovr2);
   ovr_out = ovr_in or tmp_ovr3 ;
 
   grant_out = (not req_in) and grant_in;
@@ -14,13 +14,13 @@ let
   ack_out = (grant_in or tmp_ovr3) and req_in;
 tel
 
-node mcmillan(ovr_in, req_in_1, req_in_2, req_in_3: bool)
+node mcmillan(req_in_1, req_in_2, req_in_3: bool)
    returns (ack_out_1, ack_out_2, ack_out_3: bool)
    var tk_out_1, tk_out_2, tk_out_3,
        gr_out_1, gr_out_2, gr_out_3,
        ovr_out_1, ovr_out_2, ovr_out_3: bool;
 let
-   (tk_out_1, gr_out_1, ovr_out_1, ack_out_1) = cellule(true -> pre tk_out_3, req_in_1, gr_out_2, ovr_in);
+   (tk_out_1, gr_out_1, ovr_out_1, ack_out_1) = cellule(true -> tk_out_3, req_in_1, gr_out_2, false);
    (tk_out_2, gr_out_2, ovr_out_2, ack_out_2) = cellule(tk_out_1, req_in_2, gr_out_3, ovr_out_1);
-   (tk_out_3, gr_out_3, ovr_out_3, ack_out_3) = cellule(tk_out_2, req_in_3, false -> not pre ovr_out_3, ovr_out_1);
+   (tk_out_3, gr_out_3, ovr_out_3, ack_out_3) = cellule(tk_out_2, req_in_3, false -> not ovr_out_3, ovr_out_2);
 tel

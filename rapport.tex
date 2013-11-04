@@ -127,6 +127,46 @@ and \emph{state}.
 \end{center}
 \end{figure}
 
+The way it works:
+
+priority : cell 3 > cell2 > cell1 
+
+In equal circumstances the one that has the priority gets the ack, however
+if one cell that keeps requesting gets the token twice it means that it has waited
+for the whole cycle so its time for it to get the ack. (this way avoiding deadlock)
+
+- When there's only one of them that is requesting then it gets the ack all the time
+
+all-req-1
+
+- When there's two that request separately, they don't conflict so the one that
+demands always get the ack
+
+two-alternate
+
+- When there's two of them that request continuosly, then one gets two turns and 
+the other gets one turn out of three
+
+- When there's the three requests at the same time, the third cell always takes the
+token because it has priority over the others and since no cell keeps the request
+long enough to get twice the token while the request is active, the mecanism to avoid
+"famine" doesn't activate.
+
+three-sporadic
+
+- When there's three continuosly that have been waiting waiting for more than one cycle
+for the token, the graph shows that the three get the ack alternatively. Every time 
+  one gets the ack is because it's because that cell is getting the token
+
+three-continuosly
+
+- In the beginning we can see that the first time we don't have enough info
+to calculate the acks so we return false by default even though the three
+acks have been activated. The token initially is in cell 1. On the second, third
+and fourth steps cell 3 gets the ack because it has priority with respect to cells 
+1 and 2. Finally they get back to the behaviour of alternating the ack shown in the
+previous example.
+
 %\begin{figure}
 %\label{trace-metronome-1}
 %\caption{Execution of the metronome}
