@@ -201,17 +201,31 @@ let
 tel
 \end{verbatim}
 
-\paragraph{Question 1} We can easily prove that the node follows the constraints
+\paragraph{Question 1} 
+
+We can easily prove that the node follows the constraints
 by verifying the property $not~(set~ and~ reset)$ in xlesar, which will return
-\emph{True property}. However, it isn't enough to prove that it can give any of
-the other patterns. We can easily prove that it will be the case, whatever the
-oracle's value is.
+\emph{True property}. However, it isn't enough to prove that it can give any
+(and every, not in the same time of course) of the other patterns. We can easily
+prove that it will be the case, whatever the oracle's value is.
 
 First, if we consider S and R false, then reset will be false and set too. If
 S is true and R false, then set will be true and reset false. The symetrical
 equivalent will give the symetrical result. The last case will be S and R as
 true, which will give respectively the value of the oracle and its contrary.
- 
+
+\paragraph{Question 2} 
+
+To verify the first property, we could give an observer ($assert(not~(set~ and~
+reset))$), however the second one (the node can give every of the other
+patterns) can't be verified with one, except if we ``register'' each incoming
+pattern and result associated  and once we have all of them (excluding the
+oracle), verify that we had $<set=0, reset=0>$, $<set=1, reset=0>$ and $<set=0,
+reset=1>$, which is kind of complicated.
+
+\subsection{Asynchronisme}
+
+
 
 %\begin{figure}
 %\label{trace-metronome-1}
