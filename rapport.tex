@@ -183,6 +183,36 @@ to keep track on where the token is at every moment we need to multiply the
 previous value by three (the token can be in cell1, cell2 or cell3) what
 gives us the value of 24 $2^{3}~\times~4~=~24$.
 
+\section{Modélisation de systèmes indéterminisites et/ou asynchrones}
+
+\subsection{Indéterminisme}
+
+If we suppose the constraints given, we can modelize the following node :
+
+\begin{verbatim}
+node env(S,R : bool; o : bool) returns (set,reset : bool);
+let
+  set = if S and not R then true
+        else if S and R then o
+             else false;
+  reset = if R and not S then true
+          else if S and R then not o
+               else false;
+tel
+\end{verbatim}
+
+\paragraph{Question 1} We can easily prove that the node follows the constraints
+by verifying the property $not~(set~ and~ reset)$ in xlesar, which will return
+\emph{True property}. However, it isn't enough to prove that it can give any of
+the other patterns. We can easily prove that it will be the case, whatever the
+oracle's value is.
+
+First, if we consider S and R false, then reset will be false and set too. If
+S is true and R false, then set will be true and reset false. The symetrical
+equivalent will give the symetrical result. The last case will be S and R as
+true, which will give respectively the value of the oracle and its contrary.
+ 
+
 %\begin{figure}
 %\label{trace-metronome-1}
 %\caption{Execution of the metronome}
