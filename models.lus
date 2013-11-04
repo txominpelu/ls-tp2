@@ -7,3 +7,14 @@ let
           else if S and R then not o
                else false;
 tel
+
+-- node activ_C(b : bool;i : int) returns (o :int);
+-- let
+--         o = current(C(i when b));
+-- tel
+
+node main(x,y : int; S, R : bool) returns (o1,o2 : int);
+let
+        o1 = current(C1(x when S));
+        o2 = current(C2(y when R));
+tel

@@ -269,6 +269,101 @@ to keep track on where the token is at every moment we need to multiply the
 previous value by three (the token can be in cell1, cell2 or cell3) what
 gives us the value of 24 $2^{3}~\times~4~=~24$.
 
+\section{Modélisation de systèmes indéterminisites et/ou asynchrones}
+
+\subsection{Indéterminisme}
+
+If we suppose the constraints given, we can modelize the following node :
+
+\begin{verbatim}
+node env(S,R : bool; o : bool) returns (set,reset : bool);
+let
+  set = if S and not R then true
+        else if S and R then o
+             else false;
+  reset = if R and not S then true
+          else if S and R then not o
+               else false;
+tel
+\end{verbatim}
+
+\paragraph{Question 1} 
+
+We can easily prove that the node follows the constraints
+by verifying the property $not~(set~ and~ reset)$ in xlesar, which will return
+\emph{True property}. However, it isn't enough to prove that it can give any
+(and every, not in the same time of course) of the other patterns. We can easily
+prove that it will be the case, whatever the oracle's value is.
+
+First, if we consider S and R false, then reset will be false and set too. If
+S is true and R false, then set will be true and reset false. The symetrical
+equivalent will give the symetrical result. The last case will be S and R as
+true, which will give respectively the value of the oracle and its contrary.
+
+\paragraph{Question 2} 
+
+To verify the first property, we could give an observer ($assert(not~(set~ and~
+reset))$), however the second one (the node can give every of the other
+patterns) can't be verified with one, except if we ``register'' each incoming
+pattern and result associated  and once we have all of them (excluding the
+oracle), verify that we had $<set=0, reset=0>$, $<set=1, reset=0>$ and $<set=0,
+reset=1>$, which is kind of complicated.
+
+\subsection{Asynchronisme}
+
+\paragraph{Question 1}
+
+We can easily extend the scheduler by adding the construction from activ\_C:
+
+\begin{verbatim}
+node main(x,y : int; S, R : bool) returns (o1,o2 : int);
+let
+        o1 = current(C1(x when S));
+        o2 = current(C2(y when R));
+tel
+\end{verbatim}
+
+This way, we get the value from C1 (or C2) only when we give S (respectively R),
+otherwise the previous value is given.
+
+\paragraph{Question 2}
+
+The graph representing the following asynchronous node:
+
+\begin{center}
+\includegraphics{asyn_1.pdf}
+\end{center}
+
+Since C1 and C2 are totaly independant, they don't have interaction. Moreover,
+we don't need their behavior and can suppose they are simply a state. We add
+another state, \emph{C1C2}, which correspond to the possibility of having C1 and
+C2 executed at the same time, and an $\epsilon$-transition from Main to Main,
+corresponding of no activation at all.
+
+\paragraph{Question 3}
+
+We can add strict asynchronism on the scheduler by reusing the env node from the
+previous part. This way, we can assure the at most one component can activate,
+since the variable set and reset can't be true at the same time.
+
+\begin{verbatim}
+node main(x,y : int; S, R : bool) returns (o1,o2 : int);
+let
+        set, reset = env(S, R, true);
+        o1 = current(C1(x when set));
+        o2 = current(C2(y when reset));
+tel
+\end{verbatim}
+
+The following state graph is then:
+
+\begin{center}
+\includegraphics{asyn_strict.pdf}
+\end{center}
+
+The result is obvious, since we jsut need to remove the \emph{C1C2} part from
+the graph.
+
 %\begin{figure}
 %\label{trace-metronome-1}
 %\caption{Execution of the metronome}

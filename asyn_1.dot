@@ -1,0 +1,9 @@
+digraph asyn {
+        Main -> C1 [label=S]
+        C1 -> Main [label="&epsilon;"]
+        Main -> C2 [label=R]
+        C2 -> Main [label="&epsilon;"]
+        Main -> C1C2 [label="S,R"]
+        C1C2 -> Main [label="&epsilon;"]
+        Main -> Main [label="&epsilon;"]
+}
