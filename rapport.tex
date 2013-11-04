@@ -54,16 +54,32 @@ only see how this delay is respected but also how the next signal
 emitted is not tic but tac, since the last sinal emmited with delay
 1 was tic.
 
-\begin{figure}[ht]
+\begin{figure}[!ht]
 \label{trace-metronome-1}
 \caption{Execution of the metronome}
-\includegraphics [width=1\textwidth, natwidth=750,natheight=400]{metronome_1.png}
+\includegraphics [width=1.2\textwidth, natwidth=750,natheight=600]{metronome_1.png}
 \end{figure}
 
 \subsection{Automaton}
 
 The code for C for the metronome that is generated with the commands
 lus2oc and poc is shown in figure~\ref{metronome-0}.
+
+The correspondance of the variables in the C code with
+respect to the code in lustre is the following:
+
+\begin{itemize}
+\item V1 = reset
+\item V2 = delay
+\item V3 = initial state = false
+\item V4 = n              
+\item V5 = first         
+\item V6 = hz
+\item V7 = tmp               
+\item V8 = tic  
+\item V9 = tac
+\item V10 = state
+\end{itemize}
 
 
 \begin{figure}[ht]
@@ -95,21 +111,6 @@ lus2oc and poc is shown in figure~\ref{metronome-0}.
 \caption{Code C generated with with lus2oc -0 and poc}
 \end{figure}
 
-The correspondance of the variables in the C code with
-respect to the code in lustre is the following:
-
-\begin{itemize}
-\item V1 = reset
-\item V2 = delay
-\item V3 = initial state = false
-\item V4 = n              
-\item V5 =          
-\item V6 = hz
-\item V7 = tmp               
-\item V8 = tic  
-\item V9 = tac
-\item V10 = state
-\end{itemize}
 
 And thus the corresponding automaton for the C code is shown
 in figure~\ref{automaton-0}
@@ -258,7 +259,7 @@ let
 tel
 \end{verbatim}
 
-\subsection{Functioning}:
+\subsection{Functioning}
 
 In the bus the cells have different priority level with 3 having the higher 
 priority and cell 1 the lower.
@@ -397,8 +398,8 @@ true, which will give respectively the value of the oracle and its contrary.
 
 \paragraph{Question 2} 
 
-To verify the first property, we could give an observer ($assert(not~(set~ and~
-reset))$), however the second one (the node can give every of the other
+To verify the first property, we could give an observer \\
+ ($assert(not~(set~ and~reset))$), however the second one (the node can give every of the other
 patterns) can't be verified with one, except if we ``register'' each incoming
 pattern and result associated  and once we have all of them (excluding the
 oracle), verify that we had $<set=0, reset=0>$, $<set=1, reset=0>$ and $<set=0,
