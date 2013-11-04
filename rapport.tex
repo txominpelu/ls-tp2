@@ -167,6 +167,22 @@ and fourth steps cell 3 gets the ack because it has priority with respect to cel
 1 and 2. Finally they get back to the behaviour of alternating the ack shown in the
 previous example.
 
+Q2 Question 2 : Générez l'automate de l'arbitre (option -2). Combien d'états contient-il, quelles variables ont été dépliées ?
+
+\subsection{McMillan's referee - Automaton}
+
+When generating the automaton with lus2oc and the code with poc we can see how
+the code contains 24 states. Every change to a new state is guided by the input
+signals req\_in\_1, req\_in\_2 and req\_in\_3. Intuitively we can imagine that
+the states have been unfolded based on whether the cells have been waiting for
+an ack since the last time they got the token or not and if they have the token
+now or not. We can see that if at every step we need to keep for every cell
+a boolean value saying if the cell has been waiting for the ack since the last
+token then we need $2^{3}$ states just to do that. If on top of that we need
+to keep track on where the token is at every moment we need to multiply the 
+previous value by three (the token can be in cell1, cell2 or cell3) what
+gives us the value of 24 $2^{3}~\times~4~=~24$.
+
 %\begin{figure}
 %\label{trace-metronome-1}
 %\caption{Execution of the metronome}
